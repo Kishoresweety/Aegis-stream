@@ -1,0 +1,26 @@
+syntax = "proto3";
+package aegis.ipc;
+option go_package = "aegisstream/gen/ipc;ipc";
+
+// Go Agent -> Rust Proxy
+message PolicyReloadCommand {
+  string policy_version_id = 1;
+  string mmap_file_path    = 2;
+  bytes  sha256_checksum   = 3;
+}
+
+// Rust Proxy -> Go Agent (async, non-blocking)
+message SecurityAuditEvent {
+  uint64 timestamp_unix_ns = 1;
+  string request_id        = 2;
+  string tenant_id         = 3;
+  enum Action {
+    REDACTED = 0;
+    BLOCKED  = 1;
+  }
+  Action action_taken      = 4;
+  uint32 triggered_rule_id = 5;
+  float  threat_score      = 6;
+  uint32 inspection_time_ns = 7;
+  uint32 upstream_tokens_saved = 8;
+}
